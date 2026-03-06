@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetWatch - Security Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white font-sans min-h-screen">
+    <div class="container mx-auto px-4 py-10">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-green-500 mb-2">NetWatch Scanner</h1>
+            <p class="text-slate-400">Monitoreo de red y auditoría de puertos en tiempo real</p>
+        </header>
+
+        <div class="max-w-2xl mx-auto bg-slate-800 p-6 rounded-xl shadow-2xl border border-slate-700 mb-8">
+            <form action="/scan" method="get" class="flex gap-2">
+                <input type="text" name="target" placeholder="Ej: google.com o 192.168.1.1" required
+                       class="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500 text-white">
+                <button type="submit" class="bg-green-600 hover:bg-green-500 px-6 py-2 rounded-lg font-bold transition">
+                    Escanear
+                </button>
+            </form>
+        </div>
+
+        {% if target %}
+        <div class="max-w-2xl mx-auto animate-fade-in">
+            <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+                <div class="p-4 border-b border-slate-700 flex justify-between items-center">
+                    <h2 class="text-xl font-semibold">Resultados para: <span class="text-blue-400">{{ target }}</span></h2>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold {{ 'bg-green-900 text-green-300' if estado == 'Online' else 'bg-red-900 text-red-300' }}">
+                        {{ estado }}
+                    </span>
+                </div>
+                
+                <div class="p-6">
+                    <h3 class="text-slate-400 uppercase text-xs font-bold mb-4 tracking-widest">Puertos Abiertos Detectados</h3>
+                    
+                    {% if puertos %}
+                    <div class="grid grid-cols-1 gap-3">
+                        {% for p in puertos %}
+                        <div class="flex justify-between items-center bg-slate-700/50 p-3 rounded-lg border border-slate-600">
+                            <span class="font-mono text-green-400">PORT {{ p.puerto }}</span>
+                            <span class="text-slate-300 font-bold">{{ p.servicio }}</span>
+                            <span class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">OPEN</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-slate-500 italic text-center py-4">No se detectaron puertos abiertos comunes o el host está offline.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
