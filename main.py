@@ -7,12 +7,16 @@ import socket
 
 app = FastAPI()
 
-# Configuramos la carpeta donde irán nuestros archivos HTML
+#archivos HTML
 templates = Jinja2Templates(directory="templates")
 
 # ... (Mantené aquí tus funciones realizar_ping y escanear_puertos)
+# 
+# 
 
-# Puertos que suelen ser interesantes en Ciberseguridad
+#  Definimos qué puertos consideramos peligrosos (Vulnerables o antiguos)
+PUERTOS_CRITICOS = {21, 23, 3389} # FTP, Telnet, RDP
+# Puertos que suelen ser interesantes 
 PUERTOS_COMUNES = {
     21: "FTP",
     22: "SSH",
@@ -64,16 +68,27 @@ async def leer_index(request: Request):
 
 @app.get("/scan")
 async def ejecutar_escaneo(request: Request, target: str):
-    # Esta función procesará los datos cuando toques el botón "Escanear"
     online = realizar_ping(target)
     puertos = []
-    if online:
-        puertos = escanear_puertos(target)
+    amenazas_detectadas = False
     
-    # Por ahora, devolvemos los datos a una nueva página de resultados
+    if online:
+        puertos_raw = escanear_puertos(target)
+        for p in puertos_raw:
+            # Marcamos como peligroso si está en nuestra lista negra
+            es_peligroso = p['puerto'] in PUERTOS_CRITICOS
+            puertos.append({
+                "puerto": p['puerto'],
+                "servicio": p['servicio'],
+                "peligroso": es_peligroso
+            })
+            if es_peligroso:
+                amenazas_detectadas = True
+    
     return templates.TemplateResponse("index.html", {
         "request": request, 
         "target": target, 
         "estado": "Online" if online else "Offline",
-        "puertos": puertos
+        "puertos": puertos,
+        "alerta_seguridad": amenazas_detectadas # Nueva variable para la UI
     })
