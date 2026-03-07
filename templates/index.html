@@ -32,7 +32,7 @@
             <form action="/scan" method="get" class="flex flex-wrap gap-5">
                 <input type="text" name="target" value="{{ target if target else '' }}" placeholder="Ej: google.com o 1.1.1.1" required 
                        class="flex-1 bg-black/60 border border-white/10 rounded-2xl px-8 py-4 focus:outline-none focus:border-emerald-500/50 transition-all text-white text-lg">
-                <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-10 py-4 rounded-2xl transition-all text-lg shadow-lg">
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-10 py-4 rounded-2xl transition-all text-lg">
                     🔍 Iniciar Auditoría
                 </button>
             </form>
@@ -42,7 +42,7 @@
         <div class="space-y-8">
             <div class="flex justify-between items-center border-b border-white/10 pb-6">
                 <h2 class="text-2xl font-bold italic text-emerald-400">{{ target }}</h2>
-                <span class="text-xs uppercase tracking-widest text-slate-500">Estado: {{ estado }}</span>
+                <span class="text-xs uppercase tracking-widest text-slate-500">Estado: ONLINE</span>
             </div>
 
             <div class="overflow-x-auto">
@@ -60,7 +60,7 @@
                         <tr class="glass hover:bg-emerald-500/5 transition-all">
                             <td class="px-8 py-6 rounded-l-3xl">
                                 <div class="font-mono text-xl font-bold text-emerald-400">#{{ p.puerto }}</div>
-                                <div class="text-[9px] text-slate-500 uppercase font-bold">{{ p.servicio if p.servicio else 'Header' }}</div>
+                                <div class="text-[9px] text-slate-500 uppercase font-bold">{{ p.servicio }}</div>
                             </td>
                             <td class="px-8 py-6 text-sm font-bold text-slate-200">{{ p.vector }}</td>
                             <td class="px-8 py-6">
@@ -82,14 +82,14 @@
         {% endif %}
 
         <footer class="mt-32 py-10 text-center border-t border-white/5 text-slate-700 text-[10px] uppercase tracking-[0.5em] font-black">
-            NetWatch Labs • Concordia, Entre Ríos • 2026
+            NetWatch Labs • Desarrollado por Benjamín Aquino • 2026
         </footer>
     </div>
 
     <script>
         particlesJS("particles-js", {
             "particles": {
-                "number": { "value": 85, "density": { "enable": true, "value_area": 800 } },
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
                 "color": { "value": "#10b981" },
                 "shape": { "type": "circle" },
                 "opacity": { "value": 0.25, "random": false },
