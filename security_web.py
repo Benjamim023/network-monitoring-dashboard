@@ -4,76 +4,61 @@ import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-def buscar_secretos(html):
+def fuzzer_directorios(base_url):
     hallazgos = []
-    patrones = {
-        "Google API Key": r"AIza[0-9A-Za-z-_]{35}",
-        "Stripe Live Key": r"sk_live_[0-9a-zA-Z]{24}",
-        "Firebase URL": r"https://.*\.firebaseio\.com",
-        "Posible Token/Secret": r"(?i)(key|secret|token|auth|pwd)\s*[:=]\s*['\"]([0-9a-zA-Z]{16,})['\"]"
+    # Diccionario de rutas que NUNCA deberían estar públicas
+    rutas_sensibles = {
+        "/.git/config": "Repositorio expuesto (fuga de código fuente).",
+        "/.env": "Archivo de configuración con credenciales expuesto.",
+        "/phpmyadmin/": "Panel de base de datos detectado.",
+        "/wp-admin/": "Panel de administración de WordPress.",
+        "/backup/": "Posibles copias de seguridad expuestas.",
+        "/server-status": "Información del servidor Apache expuesta."
     }
-    for nombre, regex in patrones.items():
-        if re.search(regex, html):
-            hallazgos.append({
-                "puerto": "APP", "servicio": "REGEX", "vector": f"Exposición de {nombre}",
-                "nivel_riesgo": "Crítico", "tip": "Se detectó una credencial sensible en el código fuente HTML/JS."
-            })
-    return hallazgos
 
-def probar_sql_injection(url):
-    # Fuzzing básico: enviamos una comilla simple para ver si el servidor escupe un error de base de datos
-    payloads = ["'", " OR 1=1", '"']
-    errores_sql = ["sql syntax", "mysql_fetch", "sqlite3.OperationalError", "PostgreSQL query failed"]
-    
-    for p in payloads:
+    for ruta, desc in rutas_sensibles.items():
         try:
-            test_url = f"{url}?id={p}"
-            res = requests.get(test_url, timeout=3, verify=False)
-            if any(error.lower() in res.text.lower() for error in errores_sql) or res.status_code == 500:
-                return [{
-                    "puerto": "DB", "servicio": "SQLi", "vector": "Posible Inyección SQL",
-                    "nivel_riesgo": "Crítico", "tip": f"El endpoint respondió con error 500 o sintaxis SQL al enviar '{p}'. Revise la sanitización de inputs."
-                }]
+            url_test = f"{base_url.rstrip('/')}{ruta}"
+            res = requests.get(url_test, timeout=2, verify=False, allow_redirects=False)
+            if res.status_code == 200:
+                hallazgos.append({
+                    "puerto": "DIR", "servicio": "FUZZER",
+                    "vector": f"Directorio Expuesto: {ruta}",
+                    "nivel_riesgo": "Crítico",
+                    "tip": f"⚠️ Hallazgo grave. {desc}"
+                })
         except: pass
-    return []
+    return hallazgos
 
 def analizar_cabeceras_http(url):
     target_url = url if url.startswith('http') else f"http://{url}"
     resultados = []
     
     try:
-        response = requests.get(target_url, timeout=5, verify=False, allow_redirects=True)
+        response = requests.get(target_url, timeout=5, verify=False)
         html_content = response.text
         headers = response.headers
 
-        # 1. Auditoría de Cabeceras (Lo que ya teníamos)
-        headers_criticos = {
-            "Content-Security-Policy": "Riesgo de XSS.",
-            "X-Frame-Options": "Riesgo de Clickjacking.",
-            "Strict-Transport-Security": "Protocolo HTTPS no forzado."
-        }
+        # 1. Cabeceras
+        headers_criticos = {"Content-Security-Policy": "XSS", "X-Frame-Options": "Clickjacking"}
         for h, desc in headers_criticos.items():
             if h not in headers:
                 resultados.append({
                     "puerto": "WEB", "servicio": "HTTP", "vector": f"Falta {h}",
-                    "nivel_riesgo": "Medio", "tip": desc
+                    "nivel_riesgo": "Medio", "tip": f"Riesgo de {desc}."
                 })
 
-        # 2. Búsqueda de Secretos (NUEVO)
-        resultados.extend(buscar_secretos(html_content))
-
-        # 3. Probar SQLi (NUEVO)
-        resultados.extend(probar_sql_injection(target_url))
-
-        # 4. Análisis de Formularios (NUEVO)
-        if "<form" in html_content.lower():
-            if not target_url.startswith("https"):
+        # 2. Búsqueda de Secretos (Regex)
+        patrones = {"Google API": r"AIza[0-9A-Za-z-_]{35}", "Firebase": r"firebaseio\.com"}
+        for nombre, reg in patrones.items():
+            if re.search(reg, html_content):
                 resultados.append({
-                    "puerto": "WEB", "servicio": "FORM", "vector": "Formulario Inseguro",
-                    "nivel_riesgo": "Alto", "tip": "El sitio captura datos en un formulario sin usar cifrado SSL (HTTPS)."
+                    "puerto": "APP", "servicio": "REGEX", "vector": f"Key de {nombre}",
+                    "nivel_riesgo": "Crítico", "tip": "Credencial expuesta en el HTML."
                 })
 
-    except Exception as e:
-        print(f"Error en auditoría: {e}")
-    
+        # 3. FUZZER DE DIRECTORIOS (NUEVO)
+        resultados.extend(fuzzer_directorios(target_url))
+
+    except: pass
     return resultados
