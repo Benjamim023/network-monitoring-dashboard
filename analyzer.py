@@ -1,48 +1,27 @@
 def obtener_consejos_seguridad(puerto, banner=""):
     """
-    Analiza el puerto y el banner para identificar vectores de ataque 
-    y dar consejos de protección profesionales.
+    Analiza puertos y banners para identificar vectores de ataque.
     """
     recomendaciones = {
-        "vector": "Servicio estándar detectado",
+        "vector": "Servicio estándar",
         "nivel_riesgo": "Bajo",
-        "consejo": "Mantenga sus servicios actualizados y monitoreados de forma proactiva."
+        "tip": "Mantenga sus servicios actualizados y monitoreados."
     }
 
-    # Lógica para Puertos Críticos (Fuerza Bruta)
+    # Lógica de Puertos Críticos
     if puerto in [21, 22, 23, 3389]:
-        recomendaciones["vector"] = "Acceso Remoto / Fuerza Bruta"
-        recomendaciones["nivel_riesgo"] = "Alto"
-        recomendaciones["consejo"] = (
-            f"El puerto {puerto} está expuesto. Use autenticación de doble factor (2FA) "
-            "o restrinja el acceso mediante una VPN para mitigar intentos de login."
-        )
+        recomendaciones.update({
+            "vector": "Acceso Remoto / Fuerza Bruta",
+            "nivel_riesgo": "Alto",
+            "tip": f"Puerto {puerto} expuesto. Use VPN o 2FA para mitigar riesgos."
+        })
 
-    # Lógica para Bases de Datos (Inyección SQL)
+    # Lógica de Bases de Datos
     elif puerto in [3306, 5432, 27017, 1433]:
-        recomendaciones["vector"] = "Exposición de Base de Datos"
-        recomendaciones["nivel_riesgo"] = "Crítico"
-        recomendaciones["consejo"] = (
-            "⚠️ NUNCA exponga bases de datos a Internet. Riesgo de filtración masiva. "
-            "Cierre el puerto y use un túnel SSH para administración segura."
-        )
-
-    # Lógica para Web (Cleartext)
-    elif puerto == 80:
-        recomendaciones["vector"] = "Tráfico No Cifrado (Cleartext)"
-        recomendaciones["nivel_riesgo"] = "Medio"
-        recomendaciones["consejo"] = (
-            "El puerto 80 (HTTP) viaja sin cifrar. Implemente un certificado SSL/TLS "
-            "y configure una redirección permanente al puerto 443 (HTTPS)."
-        )
-    
-    # Lógica para SMB (Ransomware)
-    elif puerto == 445:
-        recomendaciones["vector"] = "Vulnerabilidad SMB / Ransomware"
-        recomendaciones["nivel_riesgo"] = "Crítico"
-        recomendaciones["consejo"] = (
-            "PELIGRO: SMB expuesto es la vía principal para ataques de Ransomware. "
-            "Cierre este puerto inmediatamente en el firewall perimetral."
-        )
+        recomendaciones.update({
+            "vector": "Exposición de Base de Datos",
+            "nivel_riesgo": "Crítico",
+            "tip": "⚠️ NUNCA exponga bases de datos a Internet directamente."
+        })
 
     return recomendaciones
