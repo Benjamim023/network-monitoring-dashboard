@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from analyzer import obtener_consejos_seguridad # Importamos tu motor de análisis
 import socket
 import concurrent.futures
 
@@ -12,22 +13,6 @@ PUERTOS_COMUNES = {
     21: "FTP", 22: "SSH", 23: "Telnet", 25: "SMTP", 
     53: "DNS", 80: "HTTP", 443: "HTTPS", 445: "SMB",
     1433: "MSSQL", 3306: "MySQL", 3389: "RDP", 5900: "VNC"
-}
-
-# Puertos que disparan la ALERTA ROJA
-# He incluido el 80 para que pruebes con google.com y veas el rojo.
-PUERTOS_CRITICOS = {21, 23, 25, 445, 1433, 3306, 3389, 5900, 80}
-
-CONSEJOS_SEGURIDAD = {
-    21: "Riesgo alto. FTP envía datos en texto plano. Se recomienda usar SFTP/SSH.",
-    22: "Servicio seguro, pero asegúrese de usar llaves SSH en lugar de contraseñas.",
-    23: "CRÍTICO. Telnet no tiene cifrado. Reemplazar inmediatamente por SSH.",
-    25: "Servidor de correo. Verificar que no permita 'Open Relay'.",
-    80: "Puerto HTTP estándar. Considere forzar el uso de HTTPS (443).",
-    445: "PELIGRO. SMB expuesto es vulnerable a Ransomware. Cerrar o usar VPN.",
-    3306: "Base de datos expuesta. Riesgo de filtración masiva.",
-    3389: "RDP expuesto. Blanco frecuente de ataques de fuerza bruta.",
-    5900: "VNC detectado. Asegurar con contraseñas robustas y túneles cifrados."
 }
 
 def escanear_un_puerto(host, puerto, servicio):
@@ -51,15 +36,17 @@ def escanear_un_puerto(host, puerto, servicio):
                             break
             except: pass
 
-            # Aseguramos que la comparación sea entre el mismo tipo de dato
-            es_peligroso = puerto in PUERTOS_CRITICOS
+            # INTEGRACIÓN: Usamos el motor de analyzer.py
+            analisis = obtener_consejos_seguridad(puerto, banner)
 
             datos = {
                 "puerto": puerto,
                 "servicio": servicio,
                 "version": banner,
-                "peligroso": es_peligroso,
-                "tip": CONSEJOS_SEGURIDAD.get(puerto, "Servicio estándar detectado.")
+                "vector": analisis["vector"],
+                "nivel_riesgo": analisis["nivel_riesgo"],
+                "tip": analisis["consejo"],
+                "peligroso": analisis["nivel_riesgo"] in ["Alto", "Crítico"]
             }
         sock.close()
         return datos
@@ -81,7 +68,6 @@ async def leer_index(request: Request):
 @app.get("/scan")
 async def ejecutar_escaneo(request: Request, target: str):
     puertos = escanear_puertos_paralelo(target)
-    # Si hay puertos abiertos, el host está Online
     host_online = len(puertos) > 0
     hay_amenazas = any(p['peligroso'] for p in puertos)
     
