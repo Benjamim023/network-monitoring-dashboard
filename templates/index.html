@@ -3,95 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Benjamín Aquino | Software Developer</title>
+    <title>NetWatch Labs | Auditoría de Red</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #080c14; color: #e2e8f0; scroll-behavior: smooth; overflow-x: hidden; }
-        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(16, 185, 129, 0.2); }
-        .text-gradient { background: linear-gradient(to right, #10b981, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .profile-photo { border: 4px solid rgba(16, 185, 129, 0.3); box-shadow: 0 0 40px rgba(16, 185, 129, 0.15); }
-        .bounce { animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
-        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
-        .reveal.active { opacity: 1; transform: translateY(0); }
+        .glass { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .bg-dark { background-color: #020617; }
+        .status-pill { padding: 2px 10px; border-radius: 99px; font-size: 0.75rem; font-weight: bold; }
     </style>
 </head>
-<body class="font-sans antialiased">
+<body class="bg-dark text-slate-200 min-h-screen font-sans">
 
-    <section class="relative min-h-screen w-full flex flex-col justify-center items-center px-4 text-center">
-        <div class="z-10 py-10">
-            <div class="mb-8 flex justify-center w-full">
-                <div class="w-40 h-40 md:w-52 md:h-52 overflow-hidden rounded-full profile-photo">
-                    <img src="images/tu-foto.jpg" alt="Benjamín Aquino" class="w-full h-full object-cover">
-                </div>
+    <div class="max-w-6xl mx-auto py-12 px-6">
+        <div class="flex items-center gap-4 mb-12">
+            <div class="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-500 text-2xl">
+                <i class="fas fa-shield-halved"></i>
             </div>
-            <span class="text-emerald-500 font-mono text-xs tracking-[0.4em] uppercase mb-4 block">Analista & Desarrollador</span>
-            <h1 class="text-5xl md:text-7xl font-black mb-6 tracking-tighter">Benjamín <span class="text-gradient">Aquino</span></h1>
-            <div class="text-slate-400 max-w-xl mx-auto mb-10 text-lg leading-relaxed">
-                <p>Técnico Universitario en Computación (UNER).</p>
-                <p>Especialista en <strong>Java POO</strong> y apasionado por la <strong>Ciberseguridad</strong>.</p>
-            </div>
-            <div class="flex gap-4 justify-center">
-                <a href="https://linkedin.com/in/benjamin-aquino-73b6a0363" target="_blank" class="glass px-8 py-3 rounded-full hover:scale-105 transition-all flex items-center gap-2"><i class="fab fa-linkedin text-emerald-400"></i> LinkedIn</a>
-                <a href="https://github.com/Benjamim023" target="_blank" class="glass px-8 py-3 rounded-full hover:scale-105 transition-all flex items-center gap-2"><i class="fab fa-github"></i> GitHub</a>
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight">NetWatch <span class="text-emerald-500 text-sm font-mono tracking-widest uppercase">Labs</span></h1>
+                <p class="text-slate-500 text-sm">Auditoría proactiva de puertos y vectores de ataque.</p>
             </div>
         </div>
-        <div class="absolute bottom-10 left-0 w-full flex flex-col items-center cursor-pointer bounce z-20" onclick="document.getElementById('contenido').scrollIntoView()">
-            <p class="text-[10px] uppercase tracking-[0.3em] text-emerald-500 font-bold mb-2">Mis Proyectos</p>
-            <i class="fas fa-chevron-down text-emerald-500 text-xl"></i>
+
+        <div class="glass p-8 rounded-3xl mb-12">
+            <form action="/scan" method="get" class="flex flex-wrap gap-4">
+                <input type="text" name="target" placeholder="Ej: google.com o 192.168.1.1" required 
+                       class="flex-1 bg-slate-900/50 border border-white/10 rounded-xl px-6 py-3 focus:outline-none focus:border-emerald-500/50 transition-all">
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-8 py-3 rounded-xl transition-all flex items-center gap-2">
+                    <i class="fas fa-search"></i> Iniciar Auditoría
+                </button>
+            </form>
         </div>
-    </section>
 
-    <main id="contenido" class="max-w-7xl mx-auto py-24 px-6">
-        <div class="grid lg:grid-cols-12 gap-16 items-start">
-            <aside class="lg:col-span-5 lg:sticky lg:top-24 reveal">
-                <h2 class="text-4xl font-bold italic mb-6">Sobre mí</h2>
-                <div class="h-1 w-16 bg-emerald-500 rounded-full mb-8"></div>
-                <div class="space-y-6 text-slate-400 text-lg leading-relaxed text-left">
-                    <p>A mis 23 años, soy <strong>Técnico Universitario en Computación</strong> graduado de la UNER, donde continúo mi formación en la Licenciatura en Sistemas.</p>
-                    <p>Me especializo en el desarrollo orientado a objetos y la integración de prácticas de ciberseguridad para crear sistemas robustos.</p>
-                </div>
-            </aside>
+        {% if target %}
+        <div class="space-y-6 reveal">
+            <div class="flex justify-between items-end border-b border-white/5 pb-4">
+                <h2 class="text-xl font-semibold italic">Reporte para: <span class="text-emerald-400">{{ target }}</span></h2>
+                <span class="text-xs uppercase tracking-widest text-slate-500">Estado: {{ estado }}</span>
+            </div>
 
-            <section class="lg:col-span-7 space-y-12">
-                <div class="glass p-8 md:p-12 rounded-[2.5rem] reveal group hover:border-emerald-500/40 transition-all">
-                    <div class="flex justify-between items-start mb-8 text-left">
-                        <div class="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500 text-3xl">
-                            <i class="fas fa-shield-halved"></i>
-                        </div>
-                        <span class="text-[10px] font-bold text-emerald-400 border border-emerald-500/20 px-4 py-1 rounded-full uppercase">Seguridad Digital</span>
-                    </div>
-                    <h3 class="text-3xl font-bold mb-4 group-hover:text-emerald-400 transition-colors italic text-left">NetWatch Labs</h3>
-                    <p class="text-slate-400 text-lg mb-8 text-left leading-relaxed">Software de auditoría de red con detección de amenazas y banner grabbing en tiempo real.</p>
-                    <a href="https://network-monitoring-dashboard-kain.onrender.com" target="_blank" class="inline-flex items-center gap-2 text-emerald-400 font-bold hover:gap-5 transition-all text-sm uppercase text-left">Lanzar Scanner <i class="fas fa-chevron-right"></i></a>
-                </div>
+            {% if alerta_seguridad %}
+            <div class="bg-red-500/10 border border-red-500/20 p-4 rounded-xl flex items-center gap-4 text-red-400">
+                <i class="fas fa-triangle-exclamation text-2xl"></i>
+                <p class="text-sm font-bold uppercase tracking-tight">Atención: Se han detectado vulnerabilidades críticas que requieren acción inmediata.</p>
+            </div>
+            {% endif %}
 
-                <div class="glass p-8 md:p-12 rounded-[2.5rem] reveal group hover:border-cyan-500/40 transition-all">
-                    <div class="flex justify-between items-start mb-8 text-left">
-                        <div class="w-14 h-14 bg-cyan-500/10 rounded-2xl flex items-center justify-center text-cyan-500 text-3xl">
-                            <i class="fas fa-code-merge"></i>
-                        </div>
-                        <span class="text-[10px] font-bold text-cyan-400 border border-cyan-500/20 px-4 py-1 rounded-full uppercase">Backend Java</span>
-                    </div>
-                    <h3 class="text-3xl font-bold mb-4 group-hover:text-cyan-400 transition-colors italic text-left">Gestión Logística POO</h3>
-                    <p class="text-slate-400 text-lg mb-8 text-left leading-relaxed">Sistema integral con arquitectura en capas desarrollado para la UNER.</p>
-                    <a href="https://github.com/Benjamim023/Proyecto-Transportes-Java" target="_blank" class="inline-flex items-center gap-2 text-cyan-400 font-bold hover:gap-5 transition-all text-sm uppercase text-left">Ver Repositorio <i class="fab fa-github"></i></a>
-                </div>
-            </section>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-separate border-spacing-y-3">
+                    <thead>
+                        <tr class="text-slate-500 text-xs uppercase tracking-widest">
+                            <th class="px-6 py-2">Puerto / Servicio</th>
+                            <th class="px-6 py-2">Vector de Ataque</th>
+                            <th class="px-6 py-2">Riesgo</th>
+                            <th class="px-6 py-2">Recomendación Técnica</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in puertos %}
+                        <tr class="glass hover:bg-white/5 transition-colors">
+                            <td class="px-6 py-5">
+                                <div class="font-bold text-emerald-400">#{{ p.puerto }}</div>
+                                <div class="text-xs text-slate-500">{{ p.servicio }} ({{ p.version }})</div>
+                            </td>
+                            <td class="px-6 py-5">
+                                <span class="text-sm font-semibold">{{ p.vector }}</span>
+                            </td>
+                            <td class="px-6 py-5">
+                                <span class="status-pill 
+                                    {% if p.nivel_riesgo == 'Crítico' %} bg-red-600 text-white
+                                    {% elif p.nivel_riesgo == 'Alto' %} bg-orange-600 text-white
+                                    {% elif p.nivel_riesgo == 'Medio' %} bg-yellow-600 text-black
+                                    {% else %} bg-emerald-600/20 text-emerald-400 {% endif %}">
+                                    {{ p.nivel_riesgo }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-5 text-sm text-slate-400 leading-relaxed italic">
+                                {{ p.tip }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </main>
+        {% endif %}
+    </div>
 
-    <script>
-        window.addEventListener('scroll', () => {
-            const reveals = document.querySelectorAll(".reveal");
-            reveals.forEach(el => {
-                const elementTop = el.getBoundingClientRect().top;
-                if (elementTop < window.innerHeight - 100) el.classList.add("active");
-            });
-        });
-        window.dispatchEvent(new Event('scroll'));
-    </script>
+    <footer class="py-12 text-center text-slate-600 text-[10px] uppercase tracking-[0.4em]">
+        NetWatch Labs • Desarrollado por Benjamín Aquino • 2026
+    </footer>
 </body>
 </html>
